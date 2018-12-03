@@ -17,6 +17,7 @@ private:
 
 public:
 	void add(string text);
+	void add(string text, int index);
 	void del(string text);
 	string listToString();
 };
@@ -35,13 +36,73 @@ void  list::add(string text)
 	}
 	else
 	{
-		item* i = new item;
-		i->z = text;
-		lastItem->right = i;
-		i->left = lastItem;
-		i->right = NULL;
-		lastItem = i;
+		for (item* x = lastItem; x != NULL; x = x->left)
+		{
+			if (x->z == text) {
+				cout << "element jest juz na liscie" << endl;
+				break;
+			}
+			else if (x->left == NULL)
+			{
+				item* i = new item;
+				i->z = text;
+				lastItem->right = i;
+				i->left = lastItem;
+				i->right = NULL;
+				lastItem = i;
+			}
+		}
 	}
+}
+
+void list::add(string text, int index)
+{
+	if (index > 0) 
+	{
+		if (!empty)
+		{
+			int i = 0;
+			for (item* x = lastItem; x != NULL; x = x->left)
+			{
+				i++;
+				if (x->z == text) {
+					cout << "element jest juz na liscie" << endl;
+					i = -1;
+					break;
+				}
+			}
+			if (i >= index)
+			{
+				item* x = lastItem;
+				item* y = x;
+				for (; x != NULL; )
+				{
+					y = x;
+					x = x->left;
+				}
+				
+				for (int i = 0; i < index; i++)
+				{
+					y = y->right;
+				}
+				item* i = new item;
+				i->z = text;
+				y->left->right = i;
+				i->left = y->left;
+				i->right = y;
+				y->left = i;
+			}
+			else 
+			{
+				cout << "index poza zakresem listy" << endl;
+			}
+		}
+	}
+	else
+	{
+		cout << "podano niewlasciwy index" << endl;
+	}
+	
 }
 
 void list::del(string text)
@@ -111,12 +172,12 @@ int main()
 	l->add("test_0"); //dodaj do listy
 	l->add("test_1"); //dodaj do listy kolejny
 	l->add("test_2"); //dodaj do listy kolejny
+	l->add("test_3"); //dodaj do listy kolejny
+	cout << l->listToString() << endl; //wypisz listê
+	l->add("test_1+", 1);
 	cout << l->listToString() << endl; //wypisz listê
 	l->del("test_1");
 	cout << l->listToString() << endl; //wypisz listê
 	getchar();
 	return 0;
 }
-
-
-
